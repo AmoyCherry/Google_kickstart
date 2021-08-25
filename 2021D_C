@@ -1,0 +1,148 @@
+
+import java.util.*;  // Scanner
+
+public class Solution{
+
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+
+        Solution solution = new Solution();
+
+        int case_num = in.nextInt();
+        for(int i = 0; i < case_num; i ++){
+
+            int problemNum = in.nextInt(),studentNum = in.nextInt();
+            List<List<Integer>> list = new LinkedList();
+            List<Integer> tempList = new LinkedList();
+            for(int j = 0; j < problemNum; j ++){
+                tempList.clear();
+                tempList.add(in.nextInt());
+                tempList.add(in.nextInt());
+
+                list.add(new LinkedList(tempList));
+            }
+
+            int[] M = new int[studentNum];
+            for(int j = 0; j < studentNum; j ++){
+                M[j] = in.nextInt();
+            }
+            
+
+            // 输入完毕
+            
+            solution.function(list,M,i + 1);
+
+        }
+        
+
+
+    }
+
+    public void function(List<List<Integer>> list,int[] nums,int case_i){
+        List<Integer> res = new LinkedList();
+
+        for(int i = 0; i < nums.length; i ++){
+            int n = list.size(),x = 0,j = 0;
+
+            for(; x < n; x ++){
+                if(nums[i] < list.get(x).get(1)){
+                    j = x;
+                    break;
+                }
+            }
+
+            // 学生level > 所有
+            List<Integer> tempList = new LinkedList();
+            if(j == n){
+                List<Integer> last = list.get(n - 1);
+                int a = last.get(0),b = last.get(1);
+                res.add(b);
+
+                list.remove(n-1);
+                list = modify(list, a, b-1, j-1);
+
+            }else if(j == 0){
+                List<Integer> first = list.get(j);
+                int a = first.get(0),b = first.get(1);
+
+                list.remove(0);
+                if(nums[i] == a){
+                    res.add(a);
+                    list = modify(list, a+1, b, j);
+                }else if(nums[i] == b){
+                    res.add(b);
+                    list = modify(list, a, b-1, j);
+                }else{
+                    int num = nums[i];
+                    res.add(num);
+                    list = modify(list, a, num-1, j);
+                    if(list.size() == n){
+                        list = modify(list, num+1, b, j+1);
+                    }else{
+                        list = modify(list, num+1, b, j);
+                    }
+                    
+                }
+            }else{
+                List<Integer> pre = list.get(j - 1),next = list.get(j);
+                int preA = pre.get(0),preB = pre.get(1),nextA = next.get(0),nextB = next.get(1);
+
+                if(nums[i] < nextA && nums[i] > preB){
+                    if(nums[i] - preB <= nextA - nums[i]){
+                        list.remove(j-1);
+
+                        res.add(preB);
+                        list = modify(list, preA, preB-1, j-1);
+                    }else if(nums[i] - preB > nextA - nums[i]){
+                        list.remove(j);
+
+                        res.add(nextA);
+                        list = modify(list, nextA+1, nextB, j);
+                    }
+                }else if(nums[i] == preB){
+                    list.remove(j-1);
+
+                    res.add(preB);
+                    list = modify(list, preA, preB-1, j-1);
+                }else if(nums[i] == nextA){
+                    list.remove(j);
+
+                    res.add(nextA);
+                    list = modify(list, nextA+1, nextB, j);
+                }else{
+                    list.remove(j);
+                    int num = nums[i];
+                    res.add(num);
+                    list = modify(list, nextA,  num-1, j);
+                    if(list.size() == n){
+                        list = modify(list, num+1, nextB, j+1);
+                    }else{
+                        list = modify(list, num+1, nextB, j);
+                    }
+                }
+            }
+
+            
+        }
+
+        System.out.print("Case #" + case_i + ":" + res.size());
+        for(int i = 0; i < res.size(); i ++){
+            System.out.print(" " + res.get(i));
+        }
+        System.out.println("");
+        
+    }
+
+    public List<List<Integer>> modify(List<List<Integer>> list,int a,int b,int j){
+        List<Integer> tempList = new LinkedList();
+        if(a <= b){
+            tempList.add(a);
+            tempList.add(b);
+            list.add(j, new LinkedList(tempList));
+        }
+
+        return list;
+    }
+        
+
+}

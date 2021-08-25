@@ -1,0 +1,80 @@
+
+import java.util.*;  // Scanner
+
+public class Solution{
+
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+
+        Solution solution = new Solution();
+        // 测试用例数
+        int case_num = in.nextInt();
+        String skip = in.nextLine();
+        for(int i = 0; i < case_num; i ++){
+
+            String str = in.nextLine();
+            // 输入完毕
+            String result = solution.shuffledAnagram(str);
+            System.out.println("Case #" + (i+1) + ": " + result);
+        }
+
+    }
+
+    public String shuffledAnagram(String str){
+        /*
+         * 1. 排序str得到sorted
+         * 2. rotate sorted得到shifted
+         * 3. 此时sorted与shifted中的每一个对应字符必然不相同（相同就是IMPOSSIBLE），
+         *    同时遍历sorted与shifted，查找到sorted[i]字符在str中的下标，将其替换为shifted[i]，str中的每一个字符都将被替换，且必定替换为不相同的字符
+         */
+        int len = str.length();
+        char[] strs = str.toCharArray();
+        char[] sorted = str.toCharArray();
+        Arrays.sort(sorted);
+        // 排序之后，如果存在 > len/2的重复字母，那么可能存在于任何一段连续的len/2中，所以排序后不能直接判断出是否IMPOSSIBLE
+
+        char[] shifted = sorted.clone();
+        rotate(shifted);
+        // 保存str中各个字母下标
+        Map<Character,Queue<Integer>> map = new HashMap();
+        for(int i = 0; i < len; i ++){
+            Queue<Integer> que = map.getOrDefault(strs[i], new LinkedList());
+            que.offer(i);
+            map.put(strs[i], que);
+        }
+
+        // 开始映射
+        for(int i = 0; i < len; i ++){
+            char pre  = sorted[i];
+            char after = shifted[i];
+            if(pre == after) return "IMPOSSIBLE";
+            // 得到str中字母pre的下标，将其映射为必然不同的after
+            int index = map.get(pre).poll();
+            strs[index] = after;
+        }
+
+        return String.valueOf(strs);
+    }
+
+    public void rotate(char[] chars){
+        int len = chars.length;
+        int mid = (len - 1) / 2;
+
+        reverse(chars, 0, mid);
+        reverse(chars, mid+1, len - 1);
+        reverse(chars, 0, len-1);
+    }
+
+    public void reverse(char[] cs, int l, int r){
+        int i = l, j = r;
+        while(i < j){
+            char c = cs[i];
+            cs[i] = cs[j];
+            cs[j] = c;
+            i ++;
+            j --;
+        }
+    }
+        
+
+}

@@ -1,0 +1,66 @@
+
+import java.util.*;  // Scanner
+
+public class Solution{
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+
+        int case_num = in.nextInt();
+        for(int i = 0; i < case_num; i ++){
+
+            int[][] nums = new int[3][3];
+            for(int j = 0; j < 3; j ++){
+                for(int k = 0; k < 3; k ++){
+                    if(j == 1 && k == 1) continue ;
+                    nums[j][k] = in.nextInt();
+                    System.out.println("nextInt = " + nums[j][k]);
+                }
+            }
+            
+
+            // 输入完毕
+            Solution solution = new Solution();
+            solution.function(nums,i + 1);
+
+        }
+        
+
+
+    }
+
+    public void function(int[][] nums,int case_i){
+        int count1 = 0,count2 = 0,max = 0,key = 0;
+        Map<Integer,Integer> map = new HashMap();
+
+        if((nums[0][0] + nums[0][2])>>1 == nums[0][1]) count1 ++;
+        if((nums[2][0] + nums[2][2])>>1 == nums[2][1]) count1 ++;
+        if((nums[0][0] + nums[2][0])>>1 == nums[1][0]) count1 ++;
+        if((nums[0][2] + nums[2][2])>>1 == nums[1][2]) count1 ++;
+
+        key = (nums[0][1] + nums[2][1])>>1;
+        count2 = map.getOrDefault(key, 0) + 1;
+        if(count2 > max) max = count2;
+        map.put(key, count2);
+
+        key = (nums[1][0] + nums[1][2])>>1;
+        count2 = map.getOrDefault(key, 0) + 1;
+        if(count2 > max) max = count2;
+        map.put(key, count2);
+
+        key = (nums[0][0] + nums[2][2])>>1;
+        count2 = map.getOrDefault(key, 0) + 1;
+        if(count2 > max) max = count2;
+        map.put(key, count2);
+
+        key = (nums[2][0] + nums[0][2])>>1;
+        count2 = map.getOrDefault(key, 0) + 1;
+        if(count2 > max) max = count2;
+        map.put(key, count2);
+        
+
+        
+        System.out.println("Case #" + case_i + ": " + (count1 + max));
+    }
+        
+
+}
